@@ -6,16 +6,24 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.qa.app.Account;
+import com.qa.app.AccountRepositoryDB;
 import com.qa.app.AccountRepositoryMap;
 
 public class AccountTest {
 	Account account;
 	Account a;
+	Account b;
+	Account accountBack;
+	Account update;
+	Account delete;
+
 
 	@Before
 	public void startTest() {
 		account = new Account(0, null, null, 0);
 		a = new Account(0, "Deeg", null, 0);
+		b = new Account();
+		accountBack = new Account();
 	}
 
 	@Test
@@ -58,5 +66,36 @@ public class AccountTest {
 		Account retrieved = arm.retrieve(id);
 		assertEquals("Wrong account", "Deeg", retrieved.getFirstName());
 	}
+	
+	@Test
+	public void accountRepositoryDBTest() {
+		AccountRepositoryDB db = new AccountRepositoryDB();
+		db.add(b);
+		int id = b.getId();
+		accountBack = db.retrieve(id);
+		assertEquals(b, accountBack);
+	}
+	
+	@Test
+	public void DBUpdate() {
+		update = new Account();
+		AccountRepositoryDB db = new AccountRepositoryDB();
+		account.setFirstName("Adrian");
+		db.add(account);
+		int id = account.getId();
+		db.updateFirstName(id, "Danny");
+		String firstName = db.retrieve(id).getFirstName();
+		assertEquals("Wrong name updated", "Danny", firstName);
+	}
+	
+	@Test
+	public void DBDelete() {
+		delete = new Account();
+		AccountRepositoryDB db = new AccountRepositoryDB();
+		int id = account.getId();
+		db.remove(id);
+		assertNull("Account not deleted");
+	}
+	
 
 }
